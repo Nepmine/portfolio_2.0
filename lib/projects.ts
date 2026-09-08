@@ -215,3 +215,27 @@ export const projects: Project[] = [
 ];
 
 export const eras: Era[] = ["mahavi", "bridgenext", "college"];
+
+/**
+ * The three that get the large treatment, in the order they are shown. Ordered
+ * by hand rather than by era or date: Help Nepali leads because it is the one a
+ * visitor can open and use immediately.
+ */
+export const featuredSlugs = ["help-nepali", "radhakunda", "rms-platform"] as const;
+
+const bySlug = new Map(projects.map((p) => [p.slug, p]));
+
+export const featuredProjects: Project[] = featuredSlugs.map((slug) => {
+  const project = bySlug.get(slug);
+  // A typo in featuredSlugs would otherwise fail silently as a gap in the page.
+  if (!project) throw new Error(`featuredSlugs references unknown project: ${slug}`);
+  return project;
+});
+
+/** Everything the featured row does not already show, in source order. */
+export const archiveProjects: Project[] = projects.filter(
+  (p) => !featuredSlugs.includes(p.slug as (typeof featuredSlugs)[number]),
+);
+
+/** Drives the hero counter, so the number can never drift from the data. */
+export const productionCount = projects.filter((p) => p.period === "Production").length;

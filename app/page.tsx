@@ -1,16 +1,49 @@
-import Image from "next/image";
-
-import ParticleField from "@/components/ParticleField";
+import FeaturedWork from "@/components/FeaturedWork";
+import OffTheClock from "@/components/OffTheClock";
+import Portrait from "@/components/Portrait";
 import ProjectRail from "@/components/ProjectRail";
+import ShaderBackdrop from "@/components/ShaderBackdrop";
 import SiteNav from "@/components/SiteNav";
-import { eraBlurbs, eraLabels, eras, projects } from "@/lib/projects";
+import { archiveProjects, eraLabels, productionCount, projects } from "@/lib/projects";
 import { site } from "@/lib/site";
 import portrait from "@/public/my_image.jpg";
 
+/**
+ * Counted from the data rather than typed in, so the hero can never claim a
+ * number the project list does not back up.
+ */
 const stats = [
   { value: String(projects.length), label: "Projects built" },
-  { value: String(eras.length), label: "Chapters" },
-  { value: "2", label: "Teams today" },
+  { value: String(productionCount), label: "In production" },
+  { value: "2021", label: "Building since" },
+];
+
+/**
+ * What I work with, grouped by what it lets me do rather than by where it runs.
+ * "Front end / back end" is a résumé's framing; this says the same things about
+ * the same technologies while making a point about how the work gets done.
+ */
+const craft = [
+  {
+    title: "From empty repo to production",
+    body: "I take a product the whole way: server rendering and caching that keep it fast, an API and schema that hold up, and a deploy that stays up afterwards.",
+    stack: ["TypeScript", "Next.js", "Fastify", "Node.js", "PostgreSQL"],
+  },
+  {
+    title: "The data model comes first",
+    body: "Tenant isolation, role-based access and editorial workflows are decisions about data, not about screens. Get them wrong and no amount of interface saves it.",
+    stack: ["PostgreSQL", "SQL Server", "MongoDB", "TypeORM", "GraphQL", "REST"],
+  },
+  {
+    title: "Interfaces that hold up",
+    body: "Built in whichever framework the team already runs, with the state and rendering decisions made deliberately instead of inherited from a tutorial.",
+    stack: ["React", "Angular", "Next.js", "TypeScript", "HTML and CSS"],
+  },
+  {
+    title: "Systems, not screens",
+    body: "Services that talk to each other through events rather than through each other's databases, shipped inside the review and delivery process a real team runs on.",
+    stack: ["Apache Kafka", "Event-driven pub-sub", "NestJS", ".NET", "Git and code review", "Agile delivery"],
+  },
 ];
 
 export default function Home() {
@@ -21,154 +54,232 @@ export default function Home() {
       <SiteNav />
 
       <main id="main">
-        {/* ---------------------------------------------------------------- */}
-        <section className="shell hero" id="top">
-          <ParticleField className="hero-canvas" />
+        {/* ── Hero ─────────────────────────────────────────────────────── */}
+        <section className="hero-section" id="top">
+          <ShaderBackdrop className="hero-shader" />
+          <div className="hero-veil" aria-hidden="true" />
 
-          <div>
-            <span className="hero-badge glass">
-              <span className="status" aria-hidden="true" />
-              Open to product work
-            </span>
+          <div className="shell hero">
+            <div className="hero-copy">
+              <span className="hero-badge glass">
+                <span className="status" aria-hidden="true" />
+                Open to product work
+              </span>
 
-            <h1>
-              <span className="line">
-                <span>I build web</span>
-              </span>
-              <span className="line">
-                <span>platforms that</span>
-              </span>
-              <span className="line">
-                <span>
-                  go into <span className="grad-warm">production</span>.
+              <h1>
+                <span className="line">
+                  <span>I build web</span>
                 </span>
-              </span>
-            </h1>
+                <span className="line">
+                  <span>platforms that</span>
+                </span>
+                <span className="line">
+                  <span>
+                    go into <span className="grad-warm">production</span>.
+                  </span>
+                </span>
+              </h1>
 
-            <div className="fade-in">
-              <p className="hero-lede">
-                Full-stack developer in {site.location}. Full-time at{" "}
-                <strong>Bridgenext</strong>, shipping client features across React, Angular,
-                NestJS and .NET. The rest of my time goes to <strong>Mahavi</strong>, the
-                team I build our own products with.
-              </p>
+              <div className="fade-in">
+                <p className="hero-lede">
+                  Full-stack developer in {site.location}. I ship client features at{" "}
+                  <strong>Bridgenext</strong> and build our own products with{" "}
+                  <strong>Mahavi</strong> — CMS-backed platforms, multi-tenant systems, and
+                  the APIs underneath them.
+                </p>
 
-              <div className="hero-actions">
-                <a className="btn btn-solid" href="#projects">
-                  See the work
-                  <ArrowRight />
-                </a>
-                <a className="btn" href={`mailto:${site.email}`}>
-                  <Mail />
-                  Email me
-                </a>
+                <div className="hero-actions">
+                  <a className="btn btn-solid" href="#work">
+                    See the work
+                    <ArrowRight />
+                  </a>
+                  <a className="btn" href={`mailto:${site.email}`}>
+                    <Mail />
+                    Email me
+                  </a>
+                </div>
+              </div>
+
+              <dl className="hero-now fade-in delay">
+                <div>
+                  <dt>Full-time</dt>
+                  <dd>Bridgenext — Software Developer</dd>
+                </div>
+                <div>
+                  <dt>With the team</dt>
+                  <dd>Mahavi — Core developer</dd>
+                </div>
+              </dl>
+
+              <div className="hero-stats fade-in delay">
+                {stats.map((s) => (
+                  <div key={s.label}>
+                    <b>{s.value}</b>
+                    <span>{s.label}</span>
+                  </div>
+                ))}
               </div>
             </div>
 
-            <div className="hero-stats fade-in delay">
-              {stats.map((s) => (
-                <div key={s.label}>
-                  <b>{s.value}</b>
-                  <span>{s.label}</span>
-                </div>
-              ))}
-            </div>
+            <Portrait
+              src={portrait}
+              alt={`${site.name}, full-stack developer based in ${site.location}`}
+            />
           </div>
 
-          <div className="portrait">
-            <span className="portrait-glow" aria-hidden="true" />
-            <div className="portrait-frame">
-              <Image
-                src={portrait}
-                alt={`${site.name}, full-stack developer based in ${site.location}`}
-                priority
-                sizes="(max-width: 980px) 80vw, 24rem"
-                placeholder="blur"
-              />
+          <div className="shell">
+            <div className="marquee" aria-hidden="true">
+              <div className="marquee-track">
+                {marquee.map((p, i) => (
+                  <span className="marquee-item" key={`${p.slug}-${i}`}>
+                    <b>{p.title}</b>
+                    <i>{eraLabels[p.era]}</i>
+                  </span>
+                ))}
+              </div>
             </div>
-            <span className="portrait-chip glass one">
-              <b>Bridgenext</b>
-              <span>Software Developer</span>
-            </span>
-            <span className="portrait-chip glass two">
-              <b>Mahavi</b>
-              <span>Core developer</span>
-            </span>
           </div>
         </section>
 
-        <div className="shell">
-          <div className="marquee" aria-hidden="true">
-            <div className="marquee-track">
-              {marquee.map((p, i) => (
-                <span className="marquee-item" key={`${p.slug}-${i}`}>
-                  <b>{p.title}</b>
-                  <i>{eraLabels[p.era]}</i>
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* ---------------------------------------------------------------- */}
-        <section className="shell section" id="now">
-          <div className="section-head">
-            <div>
-              <span className="eyebrow reveal">Where I am</span>
-              <h2 className="reveal">Where I am now</h2>
-            </div>
-            <p className="reveal">
-              Two places, on purpose. One teaches me how software is built at scale for
-              clients; the other lets our team decide everything ourselves.
-            </p>
-          </div>
-
-          <div className="now" data-stagger>
-            <article className="now-cell glass edge-lit reveal">
-              <span className="role">Full-time</span>
-              <h3>Bridgenext</h3>
-              <p>
-                Software Developer on real client products. Production features in React,
-                Angular, Node.js and NestJS, alongside APIs, databases, Apache Kafka and
-                event-driven pub-sub architecture — inside Git workflows, code review and
-                Agile delivery.
-              </p>
-            </article>
-            <article className="now-cell glass edge-lit reveal">
-              <span className="role">With the team</span>
-              <h3>Mahavi</h3>
-              <p>
-                A four-person team building our own products and taking on client work.
-                I sit on the core dev side: Next.js, Fastify and PostgreSQL, plus the
-                studio site at mahavi.tech.
-              </p>
-            </article>
-            <article className="now-cell glass edge-lit reveal">
-              <span className="role">Based in</span>
-              <h3>Lumbini, Nepal</h3>
-              <p>
-                B.Tech from Rajarambapu Institute of Technology, Maharashtra, finished in
-                2025 with a CGPA of 8.28. Comfortable working remote across time zones.
-              </p>
-            </article>
-          </div>
-        </section>
-
-        {/* ---------------------------------------------------------------- */}
+        {/* ── Featured work ────────────────────────────────────────────── */}
         <section className="shell section" id="work">
           <div className="section-head">
             <div>
-              <span className="eyebrow reveal">The path</span>
-              <h2 className="reveal">How I got here</h2>
+              <span className="eyebrow reveal">Selected work</span>
+              <h2 className="reveal">Three that went live</h2>
             </div>
             <p className="reveal">
-              Five years, in order: learning the fundamentals the hard way, then enterprise
-              development, then shipping and owning products.
+              Production platforms built with the Mahavi team and still running: a
+              CMS-backed site for an Australian client, a multi-tenant restaurant system,
+              and a help platform for Nepali users at home and abroad.
             </p>
           </div>
 
-          <div className="timeline">
-            <div className="tl-row reveal">
+          <FeaturedWork />
+        </section>
+
+        {/* ── Archive ──────────────────────────────────────────────────── */}
+        <section className="shell section" id="archive">
+          <div className="section-head">
+            <div>
+              <span className="eyebrow reveal">The archive</span>
+              <h2 className="reveal">{archiveProjects.length} more, in order</h2>
+            </div>
+            <p className="reveal">
+              Everything else I have built — the studio site, the Bridgenext full-stack
+              work, and four years of college projects from C and Java to Kotlin. Filter
+              by where it was built.
+            </p>
+          </div>
+          <div className="reveal">
+            <ProjectRail />
+          </div>
+        </section>
+
+        {/* ── Craft ────────────────────────────────────────────────────── */}
+        <section className="shell section" id="craft">
+          <div className="section-head">
+            <div>
+              <span className="eyebrow reveal">How I work</span>
+              <h2 className="reveal">What I actually do with it</h2>
+            </div>
+            <p className="reveal">
+              Mostly TypeScript on both ends. I care more about how a system is shaped
+              than which framework draws it — so here is the work each of these is for,
+              rather than a list of logos.
+            </p>
+          </div>
+
+          <div className="craft" data-stagger>
+            {craft.map((c, i) => (
+              <article className="craft-card glass edge-lit reveal" key={c.title}>
+                <span className="craft-num" aria-hidden="true">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <h3>{c.title}</h3>
+                <p>{c.body}</p>
+                <ul>
+                  {c.stack.map((s) => (
+                    <li key={s}>{s}</li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
+
+          <p className="craft-note reveal">
+            Also fluent in <strong>Java</strong>, <strong>C</strong> and{" "}
+            <strong>Kotlin</strong> when a problem calls for them, and I build with{" "}
+            <strong>Claude and coding agents</strong> daily.
+          </p>
+        </section>
+
+        {/* ── Path ─────────────────────────────────────────────────────── */}
+        <section className="shell section" id="path">
+          <div className="section-head">
+            <div>
+              <span className="eyebrow reveal">The path</span>
+              <h2 className="reveal">Where I am, and how I got here</h2>
+            </div>
+            <p className="reveal">
+              Newest first. Five years, in reverse: shipping and owning products now,
+              enterprise development before that, and the fundamentals learned the hard
+              way underneath it all.
+            </p>
+          </div>
+
+          <ol className="timeline">
+            <li className="tl-row reveal">
+              <div className="tl-when">
+                <span className="tl-live">Now</span>
+              </div>
+              <div className="tl-what">
+                <h3>Software Developer</h3>
+                <div className="tl-where">Bridgenext</div>
+                <p>
+                  Developing and maintaining production features in React, Angular and
+                  NestJS on real client products. Hands-on with Apache Kafka and
+                  event-driven pub-sub architecture, plus APIs, databases and enterprise
+                  application architecture.
+                </p>
+                <p>
+                  Work happens with cross-functional teams under Git-based workflows, code
+                  review, Agile practice and enterprise delivery standards.
+                </p>
+              </div>
+            </li>
+
+            <li className="tl-row reveal">
+              <div className="tl-when">
+                <span className="tl-live">Now</span>
+              </div>
+              <div className="tl-what">
+                <h3>Core developer</h3>
+                <div className="tl-where">Mahavi</div>
+                <p>
+                  A four-person team building our own products and taking on client work.
+                  I sit on the core dev side — Next.js, Fastify and PostgreSQL — shipping
+                  a CMS-backed platform for an Australian client, a multi-tenant restaurant
+                  management system, helpnepali.com, and the studio site itself.
+                </p>
+              </div>
+            </li>
+
+            <li className="tl-row reveal">
+              <div className="tl-when">Internship</div>
+              <div className="tl-what">
+                <h3>Software Development Intern</h3>
+                <div className="tl-where">Bridgenext</div>
+                <p>
+                  Six months full-time, building full-stack projects across React, Angular,
+                  Node.js, NestJS, GraphQL, TypeORM, SQL Server and MongoDB, and learning
+                  how enterprise development workflows actually run day to day. It became
+                  the developer role above.
+                </p>
+              </div>
+            </li>
+
+            <li className="tl-row reveal">
               <div className="tl-when">2021 — 2025</div>
               <div className="tl-what">
                 <h3>B.Tech, Computer Engineering</h3>
@@ -182,128 +293,28 @@ export default function Home() {
                   team.
                 </p>
               </div>
-            </div>
-
-            <div className="tl-row reveal">
-              <div className="tl-when">Internship</div>
-              <div className="tl-what">
-                <h3>Software Development Intern</h3>
-                <div className="tl-where">Bridgenext</div>
-                <p>
-                  Six months full-time, building full-stack projects across React, Angular,
-                  Node.js, NestJS, GraphQL, TypeORM, SQL Server and MongoDB, and learning
-                  how enterprise development workflows actually run day to day.
-                </p>
-              </div>
-            </div>
-
-            <div className="tl-row reveal">
-              <div className="tl-when">Current</div>
-              <div className="tl-what">
-                <h3>Software Developer</h3>
-                <div className="tl-where">Bridgenext</div>
-                <p>
-                  Moved up from the internship into client project work, developing and
-                  maintaining production features in React, Angular and NestJS. Hands-on
-                  with Apache Kafka and event-driven pub-sub architecture, plus APIs,
-                  databases and enterprise application architecture.
-                </p>
-                <p>
-                  Work happens with cross-functional teams under Git-based workflows, code
-                  review, Agile practice and enterprise delivery standards.
-                </p>
-              </div>
-            </div>
-
-            <div className="tl-row reveal">
-              <div className="tl-when">Alongside</div>
-              <div className="tl-what">
-                <h3>Core developer</h3>
-                <div className="tl-where">Mahavi</div>
-                <p>
-                  Shipping production platforms with the team: a CMS-backed platform for an
-                  Australian client, a multi-tenant restaurant management system,
-                  helpnepali.com, and the studio site itself.
-                </p>
-              </div>
-            </div>
-          </div>
+            </li>
+          </ol>
         </section>
 
-        {/* ---------------------------------------------------------------- */}
-        <section className="shell section" id="projects">
-          <div className="section-head">
-            <div>
-              <span className="eyebrow reveal">Selected work</span>
-              <h2 className="reveal">Every project, in one place</h2>
+        {/* ── Off the clock ────────────────────────────────────────────── */}
+        <section className="section off" id="off">
+          <div className="shell">
+            <div className="section-head">
+              <div>
+                <span className="eyebrow reveal">Off the clock</span>
+                <h2 className="reveal">Where I go when I&rsquo;m not building</h2>
+              </div>
+              <p className="reveal">
+                Coastlines, hill stations and the long way round. Open a place to see the
+                set.
+              </p>
             </div>
-            <p className="reveal">
-              {projects.length} builds across three chapters. {eraBlurbs.mahavi}{" "}
-              {eraBlurbs.bridgenext} {eraBlurbs.college}
-            </p>
           </div>
-          <div className="reveal">
-            <ProjectRail />
-          </div>
+          <OffTheClock />
         </section>
 
-        {/* ---------------------------------------------------------------- */}
-        <section className="shell section" id="stack">
-          <div className="section-head">
-            <div>
-              <span className="eyebrow reveal">Toolkit</span>
-              <h2 className="reveal">What I work with</h2>
-            </div>
-            <p className="reveal">
-              Mostly TypeScript on both ends. I care more about how a system is shaped than
-              which framework draws it.
-            </p>
-          </div>
-
-          <div className="stack-grid" data-stagger>
-            <div className="stack-group glass edge-lit reveal">
-              <h3>Front end</h3>
-              <ul>
-                <li>React</li>
-                <li>Next.js</li>
-                <li>Angular</li>
-                <li>TypeScript</li>
-                <li>HTML and CSS</li>
-              </ul>
-            </div>
-            <div className="stack-group glass edge-lit reveal">
-              <h3>Back end</h3>
-              <ul>
-                <li>NestJS</li>
-                <li>Fastify</li>
-                <li>Node.js</li>
-                <li>.NET</li>
-                <li>GraphQL and REST</li>
-              </ul>
-            </div>
-            <div className="stack-group glass edge-lit reveal">
-              <h3>Data</h3>
-              <ul>
-                <li>PostgreSQL</li>
-                <li>SQL Server</li>
-                <li>MongoDB</li>
-                <li>TypeORM</li>
-              </ul>
-            </div>
-            <div className="stack-group glass edge-lit reveal">
-              <h3>Systems and tooling</h3>
-              <ul>
-                <li>Apache Kafka</li>
-                <li>Event-driven pub-sub</li>
-                <li>Git and code review</li>
-                <li>Claude and coding agents</li>
-                <li>Java, C, Kotlin</li>
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        {/* ---------------------------------------------------------------- */}
+        {/* ── Contact ──────────────────────────────────────────────────── */}
         <section className="shell section" id="contact">
           <div className="contact-panel glass reveal">
             <div className="contact">
@@ -386,15 +397,7 @@ function ArrowUp() {
 function Mail() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <rect
-        x="3"
-        y="5"
-        width="18"
-        height="14"
-        rx="2.5"
-        stroke="currentColor"
-        strokeWidth="1.6"
-      />
+      <rect x="3" y="5" width="18" height="14" rx="2.5" stroke="currentColor" strokeWidth="1.6" />
       <path
         d="m4 8 7.1 4.7a1.6 1.6 0 0 0 1.8 0L20 8"
         stroke="currentColor"

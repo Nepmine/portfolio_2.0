@@ -3,10 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 
 const links = [
-  { href: "#now", label: "Now" },
-  { href: "#work", label: "Path" },
-  { href: "#projects", label: "Projects" },
-  { href: "#stack", label: "Stack" },
+  { href: "#work", label: "Work" },
+  { href: "#archive", label: "Archive" },
+  { href: "#craft", label: "Craft" },
+  { href: "#path", label: "Path" },
+  { href: "#off", label: "Travel" },
 ];
 
 export default function SiteNav() {

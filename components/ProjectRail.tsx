@@ -1,10 +1,18 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { eraLabels, eras, projects, type Era } from "@/lib/projects";
+import { archiveProjects, eraLabels, eras, type Era } from "@/lib/projects";
 
 type Filter = "all" | Era;
 
+/**
+ * The archive: everything the featured row does not already show, on a rail
+ * you can drag, scroll, or walk with the arrow keys.
+ *
+ * Lighting here is fixed, not pointer-driven — the highlight on a hovered card
+ * comes from the upper right, the same direction as the hero's warm source and
+ * every shadow on the page.
+ */
 export default function ProjectRail() {
   const [filter, setFilter] = useState<Filter>("all");
   const railRef = useRef<HTMLDivElement>(null);
@@ -12,7 +20,7 @@ export default function ProjectRail() {
   const [atStart, setAtStart] = useState(true);
   const [atEnd, setAtEnd] = useState(false);
 
-  const shown = projects.filter((p) => filter === "all" || p.era === filter);
+  const shown = archiveProjects.filter((p) => filter === "all" || p.era === filter);
 
   const measure = useCallback(() => {
     const el = railRef.current;
@@ -65,15 +73,6 @@ export default function ProjectRail() {
     setDragging(false);
   };
 
-  // Feeds the card's radial highlight. Written straight to the style object so
-  // the bloom follows the cursor without a re-render per pointer move.
-  const onCardMove = (e: React.PointerEvent<HTMLElement>) => {
-    const el = e.currentTarget;
-    const box = el.getBoundingClientRect();
-    el.style.setProperty("--mx", `${e.clientX - box.left}px`);
-    el.style.setProperty("--my", `${e.clientY - box.top}px`);
-  };
-
   const onKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowRight") {
       e.preventDefault();
@@ -86,10 +85,10 @@ export default function ProjectRail() {
   };
 
   const counts: Record<Filter, number> = {
-    all: projects.length,
-    mahavi: projects.filter((p) => p.era === "mahavi").length,
-    bridgenext: projects.filter((p) => p.era === "bridgenext").length,
-    college: projects.filter((p) => p.era === "college").length,
+    all: archiveProjects.length,
+    mahavi: archiveProjects.filter((p) => p.era === "mahavi").length,
+    bridgenext: archiveProjects.filter((p) => p.era === "bridgenext").length,
+    college: archiveProjects.filter((p) => p.era === "college").length,
   };
 
   return (
@@ -131,7 +130,6 @@ export default function ProjectRail() {
               // Cards enter in sequence when a filter changes. Capped so a wide
               // rail never holds the last card back by a visible amount.
               style={{ animationDelay: `${Math.min(i, 6) * 55}ms` }}
-              onPointerMove={onCardMove}
             >
               <div className="card-top">
                 <div>
