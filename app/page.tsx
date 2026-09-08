@@ -25,23 +25,23 @@ const stats = [
  */
 const craft = [
   {
-    title: "From empty repo to production",
-    body: "I take a product the whole way: server rendering and caching that keep it fast, an API and schema that hold up, and a deploy that stays up afterwards.",
+    title: "Empty repo to production",
+    body: "I take a product the whole way. Rendering and caching that keep it quick, a schema that survives its own success, and a deploy that is still standing on Monday morning.",
     stack: ["TypeScript", "Next.js", "Fastify", "Node.js", "PostgreSQL"],
   },
   {
     title: "The data model comes first",
-    body: "Tenant isolation, role-based access and editorial workflows are decisions about data, not about screens. Get them wrong and no amount of interface saves it.",
+    body: "Tenant isolation, role-based access and editorial workflows are decisions about data, not about screens. Get them wrong and no amount of interface will dig you out.",
     stack: ["PostgreSQL", "SQL Server", "MongoDB", "TypeORM", "GraphQL", "REST"],
   },
   {
     title: "Interfaces that hold up",
-    body: "Built in whichever framework the team already runs, with the state and rendering decisions made deliberately instead of inherited from a tutorial.",
+    body: "Built in whichever framework the team already runs. State and rendering decided on purpose, rather than inherited from whichever tutorial was open at the time.",
     stack: ["React", "Angular", "Next.js", "TypeScript", "HTML and CSS"],
   },
   {
     title: "Systems, not screens",
-    body: "Services that talk to each other through events rather than through each other's databases, shipped inside the review and delivery process a real team runs on.",
+    body: "Services that talk through events instead of reaching into each other's databases. Shipped through the review, the branch, and the delivery process a real team runs on.",
     stack: ["Apache Kafka", "Event-driven pub-sub", "NestJS", ".NET", "Git and code review", "Agile delivery"],
   },
 ];
@@ -66,26 +66,29 @@ export default function Home() {
                 Open to product work
               </span>
 
+              {/* Three authored lines, each short enough to survive the column
+                  without wrapping — the rise animation reads as rhythm only if
+                  one line is one line. */}
               <h1>
                 <span className="line">
-                  <span>I build web</span>
-                </span>
-                <span className="line">
-                  <span>platforms that</span>
-                </span>
-                <span className="line">
                   <span>
-                    go into <span className="grad-warm">production</span>.
+                    My code <span className="grad-warm">runs</span>
                   </span>
+                </span>
+                <span className="line">
+                  <span>in places</span>
+                </span>
+                <span className="line">
+                  <span>I&rsquo;ve never been.</span>
                 </span>
               </h1>
 
               <div className="fade-in">
                 <p className="hero-lede">
-                  Full-stack developer in {site.location}. I ship client features at{" "}
-                  <strong>Bridgenext</strong> and build our own products with{" "}
-                  <strong>Mahavi</strong> — CMS-backed platforms, multi-tenant systems, and
-                  the APIs underneath them.
+                  Full-stack developer in {site.location}. Client platforms at{" "}
+                  <strong>Bridgenext</strong>, our own products at <strong>Mahavi</strong>.
+                  The parts I like best are the ones nobody demos — the schema, the auth,
+                  the admin panel, the migration that has to run at two in the morning.
                 </p>
 
                 <div className="hero-actions">
@@ -146,12 +149,12 @@ export default function Home() {
           <div className="section-head">
             <div>
               <span className="eyebrow reveal">Selected work</span>
-              <h2 className="reveal">Three that went live</h2>
+              <h2 className="reveal">Three that survived contact with users</h2>
             </div>
             <p className="reveal">
-              Production platforms built with the Mahavi team and still running: a
-              CMS-backed site for an Australian client, a multi-tenant restaurant system,
-              and a help platform for Nepali users at home and abroad.
+              Built with the Mahavi team, handed over, and still running without me
+              watching them. One serves an organisation in Australia, one runs
+              restaurants, one helps people find help.
             </p>
           </div>
 
@@ -163,12 +166,12 @@ export default function Home() {
           <div className="section-head">
             <div>
               <span className="eyebrow reveal">The archive</span>
-              <h2 className="reveal">{archiveProjects.length} more, in order</h2>
+              <h2 className="reveal">The other {archiveProjects.length}</h2>
             </div>
             <p className="reveal">
-              Everything else I have built — the studio site, the Bridgenext full-stack
-              work, and four years of college projects from C and Java to Kotlin. Filter
-              by where it was built.
+              The studio site, the Bridgenext builds, and four years of college
+              projects — including a 2048 clone written in C, graphics and all. Open any
+              card for the long version. I stand by most of them.
             </p>
           </div>
           <div className="reveal">
@@ -184,9 +187,9 @@ export default function Home() {
               <h2 className="reveal">What I actually do with it</h2>
             </div>
             <p className="reveal">
-              Mostly TypeScript on both ends. I care more about how a system is shaped
-              than which framework draws it — so here is the work each of these is for,
-              rather than a list of logos.
+              Mostly TypeScript, both ends. The framework matters far less than the shape
+              of the thing underneath it — so rather than a wall of logos, here is what
+              each of these is actually for.
             </p>
           </div>
 
@@ -208,9 +211,9 @@ export default function Home() {
           </div>
 
           <p className="craft-note reveal">
-            Also fluent in <strong>Java</strong>, <strong>C</strong> and{" "}
-            <strong>Kotlin</strong> when a problem calls for them, and I build with{" "}
-            <strong>Claude and coding agents</strong> daily.
+            <strong>Java</strong>, <strong>C</strong> and <strong>Kotlin</strong> when the
+            problem asks for them. And yes — <strong>Claude and coding agents</strong>,
+            daily, which mostly means I review a great deal more code than I type.
           </p>
         </section>
 
@@ -219,12 +222,12 @@ export default function Home() {
           <div className="section-head">
             <div>
               <span className="eyebrow reveal">The path</span>
-              <h2 className="reveal">Where I am, and how I got here</h2>
+              <h2 className="reveal">Five years, in reverse</h2>
             </div>
             <p className="reveal">
-              Newest first. Five years, in reverse: shipping and owning products now,
-              enterprise development before that, and the fundamentals learned the hard
-              way underneath it all.
+              Two jobs that overlap on purpose. One taught me how software gets built for
+              clients at scale; the other lets our team decide everything ourselves.
+              Underneath both, four years of building things nobody asked for.
             </p>
           </div>
 
@@ -237,14 +240,14 @@ export default function Home() {
                 <h3>Software Developer</h3>
                 <div className="tl-where">Bridgenext</div>
                 <p>
-                  Developing and maintaining production features in React, Angular and
-                  NestJS on real client products. Hands-on with Apache Kafka and
-                  event-driven pub-sub architecture, plus APIs, databases and enterprise
-                  application architecture.
+                  Production features in React, Angular and NestJS on real client
+                  products. Kafka and event-driven pub-sub, APIs, databases, and the
+                  enterprise architecture that holds it together.
                 </p>
                 <p>
-                  Work happens with cross-functional teams under Git-based workflows, code
-                  review, Agile practice and enterprise delivery standards.
+                  Cross-functional teams, Git workflows, code review, Agile. The part of
+                  the job that is less about writing code and more about it surviving four
+                  other people.
                 </p>
               </div>
             </li>
@@ -257,10 +260,14 @@ export default function Home() {
                 <h3>Core developer</h3>
                 <div className="tl-where">Mahavi</div>
                 <p>
-                  A four-person team building our own products and taking on client work.
-                  I sit on the core dev side — Next.js, Fastify and PostgreSQL — shipping
-                  a CMS-backed platform for an Australian client, a multi-tenant restaurant
-                  management system, helpnepali.com, and the studio site itself.
+                  Four of us, building our own products and taking on client work. I sit
+                  on the core dev side — Next.js, Fastify, PostgreSQL — and have shipped a
+                  CMS-backed platform for an Australian client, a multi-tenant restaurant
+                  system, helpnepali.com, and the studio site itself.
+                </p>
+                <p>
+                  No layer of process to hide behind. If it breaks at midnight, it is one
+                  of four phones that rings, and often mine.
                 </p>
               </div>
             </li>
@@ -271,10 +278,10 @@ export default function Home() {
                 <h3>Software Development Intern</h3>
                 <div className="tl-where">Bridgenext</div>
                 <p>
-                  Six months full-time, building full-stack projects across React, Angular,
-                  Node.js, NestJS, GraphQL, TypeORM, SQL Server and MongoDB, and learning
-                  how enterprise development workflows actually run day to day. It became
-                  the developer role above.
+                  Six months full-time across React, Angular, Node.js, NestJS, GraphQL,
+                  TypeORM, SQL Server and MongoDB — and, more usefully, six months of
+                  learning how enterprise development actually runs day to day. It turned
+                  into the role above.
                 </p>
               </div>
             </li>
@@ -287,10 +294,11 @@ export default function Home() {
                   Rajarambapu Institute of Technology, Sakharale, Maharashtra
                 </div>
                 <p>
-                  Graduated with a CGPA of 8.28. Spent the four years building far more
-                  than the syllabus asked for: games in C and Java, an Android app in
-                  Kotlin, a client website, and a video-based learning platform with a
-                  team.
+                  Graduated with a CGPA of 8.28, which is the least interesting thing
+                  about those four years. The rest went on things the syllabus never asked
+                  for: 2048 in C with the graphics written by hand, a terminal that plays
+                  Tic Tac Toe, an Android app for mapping litter, a real client&rsquo;s
+                  storefront, and a video-based learning platform built with a team.
                 </p>
               </div>
             </li>
@@ -303,10 +311,10 @@ export default function Home() {
             <div className="section-head">
               <div>
                 <span className="eyebrow reveal">Off the clock</span>
-                <h2 className="reveal">Where I go when I&rsquo;m not building</h2>
+                <h2 className="reveal">Somewhere without a deploy button</h2>
               </div>
               <p className="reveal">
-                Coastlines, hill stations and the long way round. Open a place to see the
+                Coastlines, hill stations, and the long way round. Open a place to see the
                 set.
               </p>
             </div>
@@ -320,10 +328,11 @@ export default function Home() {
             <div className="contact">
               <div>
                 <span className="eyebrow">Contact</span>
-                <h2>Have something worth building?</h2>
+                <h2>Have something that has to actually work?</h2>
                 <p>
-                  I am open to interesting product work, whether that is a full platform or
-                  one hard part of one. The fastest way to reach me is email.
+                  A whole platform or one hard part of one — I am interested either way.
+                  Email is the fastest route. I answer from GMT+5:45, which is a real time
+                  zone, I promise.
                 </p>
                 <a className="btn btn-solid" href={`mailto:${site.email}`}>
                   Start a conversation
@@ -354,7 +363,7 @@ export default function Home() {
 
       <footer className="shell footer">
         <span>© {new Date().getFullYear()} Suraj Ghimire</span>
-        <span>Built with Next.js in Lumbini, Nepal</span>
+        <span>Hand-built in Lumbini, Nepal. No template was harmed.</span>
         <a className="to-top" href="#top">
           <ArrowUp />
           Back to top

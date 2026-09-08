@@ -640,7 +640,7 @@ a {
 }
 
 .hero h1 {
-  font-size: clamp(2.6rem, 6.4vw, 4.9rem);
+  font-size: clamp(2.5rem, 5.9vw, 4.5rem);
   letter-spacing: -0.045em;
   line-height: 1.02;
   margin-bottom: 1.6rem;
@@ -1117,6 +1117,7 @@ a {
     "head    summary"
     "detail  detail"
     "foot    foot";
+  align-items: start;
   column-gap: clamp(1.5rem, 4vw, 3.5rem);
   row-gap: 1.5rem;
   transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease),
@@ -1226,40 +1227,65 @@ a {
   color: var(--bone);
 }
 
-.feat-detail {
+/* The row that used to hold a full paragraph now holds only the scannable
+   part; the paragraph itself lives behind the toggle below it. */
+.feat-body {
   grid-area: detail;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
-  column-gap: clamp(1.5rem, 4vw, 3.5rem);
-  row-gap: 1.25rem;
-  padding-top: 1.5rem;
+  padding-top: 1.4rem;
   border-top: 1px solid rgba(236, 231, 220, 0.09);
 }
 
-/* Nothing to sit beside, so the description runs the full width rather than
-   leaving an empty column. */
-.feat-detail.solo {
-  grid-template-columns: 1fr;
+.feat-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0.4rem 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font-family: var(--font-display), sans-serif;
+  font-size: 0.88rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  color: var(--bone-dim);
+  transition: color 0.3s var(--ease);
 }
 
-.feat-desc {
+.feat-highlights + .feat-more {
+  margin-top: 1.1rem;
+}
+
+.feat-more svg {
+  transition: transform 0.4s var(--ease);
+}
+
+.feat-more:hover {
+  color: var(--marigold);
+}
+
+.feat-more[aria-expanded="true"] {
+  color: var(--marigold);
+}
+
+.feat-more[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
+.feat-detail p {
   margin: 0;
+  max-width: 68ch;
   font-size: 0.95rem;
   color: var(--bone-dim);
-  max-width: none;
-}
-
-.feat-detail.solo .feat-desc {
-  max-width: 68ch;
 }
 
 .feat-highlights {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: grid;
-  gap: 0.6rem;
-  align-content: start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem 1.75rem;
 }
 
 .feat-highlights li {
@@ -1352,8 +1378,7 @@ a {
 }
 
 @media (max-width: 900px) {
-  .feat-card,
-  .feat-detail {
+  .feat-card {
     grid-template-columns: 1fr;
   }
   .feat-card {
@@ -1563,12 +1588,21 @@ a {
   background: rgba(7, 19, 16, 0.18);
 }
 
+.filter-note {
+  margin: -0.9rem 0 1.6rem;
+  max-width: 56ch;
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 0.98rem;
+  color: var(--bone-faint);
+}
+
 .rail-wrap {
   position: relative;
 }
 
 .rail {
   display: flex;
+  align-items: start;
   gap: 1.25rem;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
@@ -1643,11 +1677,112 @@ a {
   z-index: 1;
 }
 
-.card-top {
+/* The whole header is the toggle: a big, obvious hit target that still leaves
+   the stack chips and the outbound link as ordinary, selectable content. */
+.card-head {
+  display: grid;
+  gap: 0.25rem;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.card-head-top {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  margin-bottom: 0.85rem;
+}
+
+.card-toggle {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 1.85rem;
+  height: 1.85rem;
+  border-radius: 50%;
+  border: 1px solid rgba(236, 231, 220, 0.14);
+  color: var(--bone-dim);
+  transition: color 0.3s var(--ease), border-color 0.3s var(--ease),
+    background 0.3s var(--ease), transform 0.4s var(--ease);
+}
+
+.card-head:hover .card-toggle,
+.card-head:focus-visible .card-toggle {
+  color: var(--marigold);
+  border-color: rgba(233, 162, 59, 0.45);
+  background: rgba(233, 162, 59, 0.09);
+}
+
+/* The vertical bar collapses, so plus becomes minus in place. */
+.plus-bar {
+  transform-origin: 12px 12px;
+  transition: transform 0.4s var(--ease), opacity 0.3s var(--ease);
+}
+
+.card.open .plus-bar,
+.feat-more[aria-expanded="true"] .plus-bar {
+  transform: scaleY(0);
+  opacity: 0;
+}
+
+.card.open .card-toggle {
+  transform: rotate(180deg);
+  color: var(--marigold);
+  border-color: rgba(233, 162, 59, 0.4);
+}
+
+.card-title {
+  display: block;
+  font-family: var(--font-display), sans-serif;
+  font-size: 1.55rem;
+  font-weight: 600;
+  letter-spacing: -0.032em;
+  line-height: 1.1;
+  color: var(--bone);
+  transition: color 0.3s var(--ease);
+}
+
+.card-head:hover .card-title {
+  color: var(--marigold-lit);
+}
+
+/* Collapsible region. The 1fr/0fr grid trick animates to the content's real
+   height without measuring it in JavaScript. */
+.card-detail,
+.feat-detail {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.5s var(--ease), opacity 0.35s var(--ease),
+    margin 0.5s var(--ease);
+  opacity: 0;
+}
+
+.card-detail-inner,
+.feat-detail-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.card.open .card-detail,
+.feat-card.open .feat-detail {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.card.open .card-detail {
+  margin-top: 1.15rem;
+}
+
+.feat-card.open .feat-detail {
+  margin-top: 1.1rem;
 }
 
 .card-era {
@@ -1669,35 +1804,34 @@ a {
   border-color: rgba(233, 162, 59, 0.4);
 }
 
-.card h3 {
-  font-size: 1.7rem;
-  margin-bottom: 0.25rem;
-}
-
 .card-kind {
+  display: block;
   font-family: var(--font-display), sans-serif;
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   color: var(--marigold);
   letter-spacing: -0.01em;
 }
 
 .card-summary {
+  display: block;
   font-family: var(--font-serif), Georgia, serif;
-  font-size: 1.04rem;
-  line-height: 1.6;
-  margin: 1.15rem 0 0.9rem;
+  font-size: 1.05rem;
+  line-height: 1.55;
+  margin-top: 1rem;
   color: var(--bone);
 }
 
 .card-desc {
-  font-size: 0.93rem;
+  font-size: 0.92rem;
   color: var(--bone-dim);
-  margin-bottom: 1.15rem;
+  margin: 0 0 1rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid rgba(236, 231, 220, 0.09);
 }
 
 .card ul {
   list-style: none;
-  margin: 0 0 1.2rem;
+  margin: 0;
   padding: 0;
   display: grid;
   gap: 0.45rem;

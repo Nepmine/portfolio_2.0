@@ -1,20 +1,25 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { archiveProjects, eraLabels, eras, type Era } from "@/lib/projects";
+import { archiveProjects, eraBlurbs, eraLabels, eras, type Era } from "@/lib/projects";
 
 type Filter = "all" | Era;
 
 /**
- * The archive: everything the featured row does not already show, on a rail
- * you can drag, scroll, or walk with the arrow keys.
+ * The archive: everything the featured row does not already show.
  *
- * Lighting here is fixed, not pointer-driven — the highlight on a hovered card
- * comes from the upper right, the same direction as the hero's warm source and
- * every shadow on the page.
+ * Cards are closed by default. A card carries a title, what it is, one line,
+ * and its stack — the long description sits behind a toggle, because fourteen
+ * paragraphs stacked side by side is a wall, not a portfolio. Everything is
+ * still one click away.
+ *
+ * Lighting is fixed rather than pointer-driven: the highlight on a hovered card
+ * comes from the upper right, same as the hero's warm source and every shadow
+ * on the page.
  */
 export default function ProjectRail() {
   const [filter, setFilter] = useState<Filter>("all");
+  const [open, setOpen] = useState<string | null>(null);
   const railRef = useRef<HTMLDivElement>(null);
   const [progress, setProgress] = useState(0);
   const [atStart, setAtStart] = useState(true);
@@ -39,6 +44,13 @@ export default function ProjectRail() {
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
   }, [filter, measure]);
+
+  const changeFilter = (f: Filter) => {
+    setFilter(f);
+    // An open card from the previous filter would otherwise stay expanded
+    // behind the new set.
+    setOpen(null);
+  };
 
   const step = (dir: 1 | -1) => {
     const el = railRef.current;
@@ -74,6 +86,8 @@ export default function ProjectRail() {
   };
 
   const onKeyDown = (e: React.KeyboardEvent) => {
+    // Let the arrow keys reach a focused toggle instead of stealing them.
+    if ((e.target as HTMLElement).closest("button")) return;
     if (e.key === "ArrowRight") {
       e.preventDefault();
       step(1);
@@ -100,13 +114,20 @@ export default function ProjectRail() {
             type="button"
             className="chip"
             aria-pressed={filter === f}
-            onClick={() => setFilter(f)}
+            onClick={() => changeFilter(f)}
           >
             {f === "all" ? "Everything" : eraLabels[f]}
             <span className="count">{counts[f]}</span>
           </button>
         ))}
       </div>
+
+      {/* Choosing an era should explain itself, not just filter silently. */}
+      <p className="filter-note" aria-live="polite">
+        {filter === "all"
+          ? "Three eras, newest first. Every card opens."
+          : eraBlurbs[filter]}
+      </p>
 
       <div className="rail-wrap">
         <div
@@ -122,56 +143,79 @@ export default function ProjectRail() {
           role="region"
           aria-label="Project cards, scroll sideways"
         >
-          {shown.map((p, i) => (
-            <article
-              className="card glass edge-lit"
-              data-card
-              key={p.slug}
-              // Cards enter in sequence when a filter changes. Capped so a wide
-              // rail never holds the last card back by a visible amount.
-              style={{ animationDelay: `${Math.min(i, 6) * 55}ms` }}
-            >
-              <div className="card-top">
-                <div>
-                  <h3>{p.title}</h3>
-                  <div className="card-kind">{p.kind}</div>
-                </div>
-                <div className="card-era">{eraLabels[p.era]}</div>
-              </div>
-
-              <p className="card-summary">{p.summary}</p>
-              <p className="card-desc">{p.description}</p>
-
-              {p.highlights ? (
-                <ul>
-                  {p.highlights.map((h) => (
-                    <li key={h}>{h}</li>
-                  ))}
-                </ul>
-              ) : null}
-
-              <div className="card-foot">
-                <div className="tags">
-                  {p.stack.map((s) => (
-                    <span className="tag" key={s}>
-                      {s}
+          {shown.map((p, i) => {
+            const isOpen = open === p.slug;
+            return (
+              <article
+                className={`card glass edge-lit${isOpen ? " open" : ""}`}
+                data-card
+                key={p.slug}
+                // Cards enter in sequence when a filter changes. Capped so a
+                // wide rail never holds the last card back by a visible amount.
+                style={{ animationDelay: `${Math.min(i, 6) * 55}ms` }}
+              >
+                <button
+                  type="button"
+                  className="card-head"
+                  aria-expanded={isOpen}
+                  aria-controls={`detail-${p.slug}`}
+                  onClick={() => setOpen(isOpen ? null : p.slug)}
+                >
+                  <span className="card-head-top">
+                    <span className="card-era">{eraLabels[p.era]}</span>
+                    <span className="card-toggle" aria-hidden="true">
+                      <Plus />
                     </span>
-                  ))}
+                  </span>
+                  <span className="card-title">{p.title}</span>
+                  <span className="card-kind">{p.kind}</span>
+                  <span className="card-summary">{p.summary}</span>
+                </button>
+
+                <div
+                  className="card-detail"
+                  id={`detail-${p.slug}`}
+                  // `hidden` would kill the height transition; the CSS grid
+                  // collapse handles the visual, this handles the semantics.
+                  aria-hidden={!isOpen}
+                >
+                  <div className="card-detail-inner">
+                    <p className="card-desc">{p.description}</p>
+                    {p.highlights ? (
+                      <ul>
+                        {p.highlights.map((h) => (
+                          <li key={h}>{h}</li>
+                        ))}
+                      </ul>
+                    ) : null}
+                  </div>
                 </div>
-                {p.link ? (
-                  <a
-                    className="card-link"
-                    href={p.link.href}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                  >
-                    Visit {p.link.label}
-                    <ExternalLink />
-                  </a>
-                ) : null}
-              </div>
-            </article>
-          ))}
+
+                <div className="card-foot">
+                  <div className="tags">
+                    {p.stack.map((s) => (
+                      <span className="tag" key={s}>
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+                  {p.link ? (
+                    <a
+                      className="card-link"
+                      href={p.link.href}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      // Hidden from the tab order while collapsed would be
+                      // wrong — the link is always visible, so it stays live.
+                    >
+                      Visit {p.link.label}
+                      <ExternalLink />
+                    </a>
+                  ) : null}
+                </div>
+              </article>
+            );
+          })}
         </div>
 
         <div className="rail-controls">
@@ -196,10 +240,19 @@ export default function ProjectRail() {
           <div className="progress" aria-hidden="true">
             <i style={{ width: `${Math.max(8, progress * 100)}%` }} />
           </div>
-          <span className="rail-hint">Drag, scroll or use arrow keys</span>
+          <span className="rail-hint">Drag, scroll, or use the arrow keys</span>
         </div>
       </div>
     </div>
+  );
+}
+
+function Plus() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+      <path d="M12 5v14" className="plus-bar" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M5 12h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
   );
 }
 

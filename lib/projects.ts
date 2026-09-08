@@ -7,7 +7,9 @@ export type Project = {
   era: Era;
   period: string;
   stack: string[];
+  /** One line. Carries the project on its own — the card shows only this. */
   summary: string;
+  /** The long version, revealed on demand rather than dumped on the page. */
   description: string;
   link?: { label: string; href: string };
   highlights?: string[];
@@ -19,10 +21,11 @@ export const eraLabels: Record<Era, string> = {
   college: "College",
 };
 
+/** Shown under the filter chips, so choosing an era explains itself. */
 export const eraBlurbs: Record<Era, string> = {
-  mahavi: "Products built with the Mahavi team, shipped and maintained in production.",
-  bridgenext: "Full-stack work built during the internship and developer role at Bridgenext.",
-  college: "Four years of building things to learn how they work, from C to Kotlin.",
+  mahavi: "Our own team's work. Shipped, handed over, still running.",
+  bridgenext: "Enterprise full-stack, built to somebody else's standards — which is its own skill.",
+  college: "Four years of building things nobody asked for. That turned out to be the point.",
 };
 
 export const projects: Project[] = [
@@ -34,9 +37,9 @@ export const projects: Project[] = [
     period: "Production",
     stack: ["Next.js", "Fastify", "PostgreSQL", "TypeScript"],
     summary:
-      "A production platform for an Australian client running spiritual research, events and educational programmes.",
+      "A spiritual research organisation in Australia runs on code written in Lumbini.",
     description:
-      "Built and deployed as part of the core development team at Mahavi. The platform carries public content, event listings and educational material for the organisation, backed by a full content management system and admin dashboard: usage statistics, editorial workflows and role-based access control so staff only reach what belongs to them. Next.js handles server rendering, caching and search visibility for the public site; Fastify and PostgreSQL run the API and data layer.",
+      "Built and deployed as part of the core development team at Mahavi. The public site carries the organisation's research, events and educational material; behind it sits a full CMS and admin dashboard — editorial workflows, usage statistics, and role-based access so staff only reach what belongs to them. Next.js handles rendering, caching and search visibility. Fastify and PostgreSQL run the API and the data underneath.",
     highlights: [
       "CMS and admin dashboard with role-based access control",
       "Server-rendered public site tuned for search and caching",
@@ -51,9 +54,9 @@ export const projects: Project[] = [
     period: "Production",
     stack: ["React", "Node.js", "Fastify", "PostgreSQL"],
     summary:
-      "One platform that runs a restaurant end to end, built to host many restaurants at once.",
+      "Runs a restaurant end to end — and catches an allergy conflict before the waiter can.",
     description:
-      "A multi-tenant system that digitises the whole dine-in flow: customisable menus, table ordering, waiter calls, quantity-based pricing and invoice generation. Behind it sits an admin system with role-based access control, staff and inventory management, analytics, scheduled data backups and AI-assisted allergy detection that flags conflicting ingredients before an order is confirmed. Each restaurant gets isolated data and its own configuration on shared infrastructure.",
+      "One system for the whole dine-in flow: customisable menus, table ordering, waiter calls, quantity-based pricing and invoicing. Behind it, an admin side with role-based access, staff and inventory management, analytics, scheduled backups, and AI-assisted allergy detection that flags conflicting ingredients before an order is confirmed. Every restaurant gets isolated data and its own configuration on shared infrastructure — which is the hard part, and the reason it was worth building properly.",
     highlights: [
       "Tenant isolation with per-restaurant configuration",
       "Menus, ordering, waiter calls, invoicing",
@@ -68,9 +71,9 @@ export const projects: Project[] = [
     period: "Recent",
     stack: ["Next.js", "TypeScript", "PostgreSQL"],
     summary:
-      "A web platform connecting Nepali people with the help, information and services they are looking for.",
+      "Somewhere for Nepali people to find the help they are actually looking for, at home and abroad.",
     description:
-      "A recent build aimed at making practical help easier to find for Nepali users at home and abroad. The site is server-rendered for fast first loads and search visibility, with structured content and an admin side for keeping listings current.",
+      "Practical help is usually out there and almost never findable. This is an attempt to fix the findable half: server-rendered for fast first loads and search visibility, structured content so listings surface properly, and an admin side so they stay current instead of quietly rotting.",
     link: { label: "helpnepali.com", href: "https://helpnepali.com" },
   },
   {
@@ -80,10 +83,9 @@ export const projects: Project[] = [
     era: "mahavi",
     period: "Production",
     stack: ["Next.js", "TypeScript", "CSS"],
-    summary:
-      "The website for Mahavi, the team I build personal and client projects with.",
+    summary: "The site for the team I build with. Static-first, and it actually ranks.",
     description:
-      "Designed and built the public site for Mahavi: what the team does, the work it has shipped and how to reach it. Static-first for speed, with metadata and structured data set up so the studio actually surfaces in search.",
+      "Designed and built the public site for Mahavi: what the team does, the work it has shipped, and how to reach it. Static-first for speed, with metadata and structured data set up properly — so the studio surfaces in search rather than existing only for people who already know the URL.",
     link: { label: "mahavi.tech", href: "https://mahavi.tech" },
   },
   {
@@ -94,9 +96,9 @@ export const projects: Project[] = [
     period: "Full stack",
     stack: ["Angular", "NestJS", "GraphQL", "TypeORM", "SQL Server"],
     summary:
-      "Browse films by genre, title, actor or producer, keep favourites, stay logged in securely.",
+      "Find a film by genre, title, actor or producer. Keep favourites. Never think about the login again.",
     description:
-      "A film catalogue with rich querying: explore by genre, title, actor or producer, see top hits and save favourites to an account. Authentication uses JWTs with hashed passwords. Data lives in SQL Server through TypeORM, exposed by a GraphQL API served from NestJS, with an Angular front end driving the interface.",
+      "A film catalogue built around querying it properly: explore by genre, title, actor or producer, see top hits, save favourites to an account. Authentication runs on JWTs with hashed passwords. Data sits in SQL Server through TypeORM, exposed by a GraphQL API served from NestJS, with Angular driving the front end.",
     highlights: [
       "GraphQL schema over TypeORM entities",
       "JWT auth with password hashing",
@@ -111,9 +113,9 @@ export const projects: Project[] = [
     period: "Full stack",
     stack: ["React", "NestJS", "TypeORM", "SQL Server"],
     summary:
-      "A task and progress tool where users create, edit, complete and clear their work items.",
+      "Create, edit, complete, clear. The unglamorous CRUD that teaches you a stack properly.",
     description:
-      "Users add, edit, delete and mark items complete, with everything persisted to SQL Server through TypeORM. React handles the interactive interface while NestJS owns routing, request validation and API logic, keeping the data rules in one place rather than spread across the client.",
+      "Users add, edit, delete and complete work items, all persisted to SQL Server through TypeORM. React handles the interactive side; NestJS owns routing, request validation and API logic — so the rules live in one place instead of being scattered across the client and rediscovered later.",
   },
   {
     slug: "task-manager",
@@ -123,9 +125,9 @@ export const projects: Project[] = [
     period: "Full stack",
     stack: ["React", "NestJS", "TypeORM", "SQL Server"],
     summary:
-      "The productivity tool I built for myself to learn the React and NestJS stack end to end.",
+      "Built it for myself. It quietly became the sandbox I tested every new pattern in.",
     description:
-      "A full-stack task manager: add, edit, delete and complete tasks, all stored in SQL Server via TypeORM. React handles a clean, interactive UI while NestJS manages routing, validation and API logic. It started as a personal tool and became the reference project I reached for whenever I needed to test a pattern in the stack.",
+      "A full-stack task manager — add, edit, delete, complete, all stored in SQL Server via TypeORM. React handles the interface, NestJS the routing, validation and API logic. It started as a tool I actually wanted and turned into the reference project I reached for whenever I needed to try something in this stack before trusting it with real work.",
   },
   {
     slug: "doubtify",
@@ -135,10 +137,14 @@ export const projects: Project[] = [
     period: "Team project",
     stack: ["Node.js", "MongoDB", "WebRTC"],
     summary:
-      "Learners post a doubt, an available expert picks it up, and the two talk it through on video.",
+      "Post a doubt, get matched to someone who can answer it, sort it out on a video call. No forum, no three-day wait.",
     description:
-      "A team project built as a two-way handshake between learners and experts. Instead of waiting on a forum thread, a learner raises a doubt and gets matched to someone who can answer it, resolving it live over a video call. Node.js runs the backend and matching logic, with MongoDB storing users, sessions and doubt history.",
-    highlights: ["Real-time video doubt resolution", "Learner-to-expert matching", "Node.js and MongoDB backend"],
+      "A team project built as a two-way handshake between learners and experts. Instead of a question dying in a thread, a learner raises a doubt, gets matched to somebody available who can actually answer it, and resolves it live over video. Node.js runs the backend and the matching logic; MongoDB stores users, sessions and doubt history.",
+    highlights: [
+      "Real-time video doubt resolution",
+      "Learner-to-expert matching",
+      "Node.js and MongoDB backend",
+    ],
   },
   {
     slug: "snaptogarbage",
@@ -148,9 +154,9 @@ export const projects: Project[] = [
     period: "Android",
     stack: ["Kotlin", "Android"],
     summary:
-      "Photograph litter, mark where it is, and turn scattered waste into something a community can act on.",
+      "Photograph litter, drop a pin, turn scattered rubbish into a map somebody can act on.",
     description:
-      "An Android app built in Kotlin that makes cleanup reporting as simple as taking a photo. Users snap waste they come across, the app records the location, and the reports build into a shared map of what needs attention. The idea was to lower the effort of reporting to almost nothing so that awareness turns into action.",
+      "An Android app in Kotlin that makes reporting waste as cheap as taking a photo. Snap what you come across, the app records where it was, and the reports build into a shared map of what needs attention. The whole idea was to push the effort of reporting close to zero, on the theory that awareness only becomes action when it stops being a chore.",
   },
   {
     slug: "2048",
@@ -159,10 +165,9 @@ export const projects: Project[] = [
     era: "college",
     period: "C",
     stack: ["C", "Graphics library"],
-    summary:
-      "The tile-sliding puzzle, written from scratch in C with its own graphical interface.",
+    summary: "The tile puzzle, written in C. Including the graphics. I do not recommend this.",
     description:
-      "Built the whole game in C, including the graphical interface, using nothing but the language and a graphics library. Tiles merge on a matrix, the board fills, and the numbers climb as the space runs out. Doing it in C meant handling the grid, the merge rules, input and rendering by hand, which is exactly why it was worth doing.",
+      "Built the entire game in C — grid, merge rules, input handling and rendering, all by hand, with nothing but the language and a graphics library. Doing it this way meant there was nowhere to hide: no framework to absorb a bad decision, no library to make the redraw problem somebody else's. Which is exactly why it was worth doing once.",
   },
   {
     slug: "clickblitz",
@@ -172,9 +177,9 @@ export const projects: Project[] = [
     period: "Java",
     stack: ["Java", "Swing", "Threads"],
     summary:
-      "Hit the dots before the timer does. A desktop game about precision under pressure.",
+      "Hit the dots before the timer does. Java Swing, threads, and an interface that stays responsive while it judges you.",
     description:
-      "A desktop game built with Java Swing and threads. Dots appear and the player has a fixed window to click them, with the timing handled on its own thread so the interface stays responsive. It scores both accuracy and speed, and tightens the window as the player improves.",
+      "A desktop game built with Java Swing. Dots appear and the player has a fixed window to click them, with the timing handled on its own thread so the interface never freezes mid-round — which is the actual lesson of the project. It scores accuracy and speed together, and narrows the window as you get better.",
   },
   {
     slug: "tic-tac-toe",
@@ -184,9 +189,9 @@ export const projects: Project[] = [
     period: "C",
     stack: ["C", "Terminal UI"],
     summary:
-      "A multiplayer game with a real interface, drawn entirely inside the terminal.",
+      "Multiplayer, with a real interface, drawn entirely inside a terminal. Opening a window felt like cheating.",
     description:
-      "Rather than opening a window, this one renders its interface in the terminal itself. Players navigate and interact using ordinary terminal input while getting a visually laid-out board, so the whole game runs without any external application.",
+      "Rather than opening a window, this one renders its whole interface in the terminal. Players navigate with ordinary terminal input and still get a properly laid-out board, so the game runs anywhere a shell does and needs nothing installed to play.",
   },
   {
     slug: "muskan-jewellers",
@@ -196,9 +201,9 @@ export const projects: Project[] = [
     period: "Client work",
     stack: ["HTML", "CSS", "JavaScript"],
     summary:
-      "A responsive storefront for a jewellery shop, built to make the collection the whole point.",
+      "A storefront for a jewellery shop, built so the collection gets the room and the layout gets out of the way.",
     description:
-      "A responsive website for a jewellery shop to show its collection well. The layout gives the pieces room and holds up across screen sizes, with HTML and CSS handling the presentation and JavaScript adding the interactive pieces that keep browsing smooth.",
+      "A responsive site for a jewellery shop that needed its pieces to be the whole point. The layout gives them space and holds together across screen sizes, with HTML and CSS carrying the presentation and JavaScript adding only the interaction that keeps browsing smooth. My first real client, and the first time a deadline belonged to somebody else.",
   },
   {
     slug: "carbon-hackathon",
@@ -208,9 +213,9 @@ export const projects: Project[] = [
     period: "Hackathon",
     stack: ["ICT", "Mobile"],
     summary:
-      "A hackathon answer to paper waste: replace printed manuals with an app.",
+      "A hackathon answer to a deeply unglamorous problem: printed product manuals, and the paper they waste.",
     description:
-      "Built at a hackathon focused on carbon reduction. Our team took a specific, unglamorous source of waste — printed product manuals — and built an application to digitise them, so the same information reaches people without the paper behind it.",
+      "Built at a hackathon on carbon reduction. Most teams reached for the big, abstract version of the problem. We took a small, specific, boring source of waste — the printed manual nobody reads that ships in every box — and built an application to digitise it, so the same information reaches people without the paper behind it.",
   },
 ];
 
