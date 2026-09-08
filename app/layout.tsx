@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, Newsreader } from "next/font/google";
+import { Bricolage_Grotesque, Inter, Newsreader } from "next/font/google";
 import "./globals.css";
+import Reveal from "@/components/Reveal";
 import { site } from "@/lib/site";
 import { projects } from "@/lib/projects";
 
@@ -11,9 +12,17 @@ const display = Bricolage_Grotesque({
   weight: ["400", "500", "600", "700"],
 });
 
-const body = Newsreader({
+// Inter carries the running text; Newsreader is kept as an editorial accent for
+// ledes, section standfirsts and project summaries.
+const body = Inter({
   subsets: ["latin"],
   variable: "--font-body",
+  display: "swap",
+});
+
+const serif = Newsreader({
+  subsets: ["latin"],
+  variable: "--font-serif",
   display: "swap",
   weight: ["300", "400", "500", "600"],
   style: ["normal", "italic"],
@@ -111,7 +120,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   };
 
   return (
-    <html lang="en" className={`${display.variable} ${body.variable}`}>
+    <html lang="en" className={`${display.variable} ${body.variable} ${serif.variable}`}>
       <body>
         <script
           type="application/ld+json"
@@ -120,7 +129,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a className="skip" href="#main">
           Skip to content
         </a>
+        <div className="ambience" aria-hidden="true">
+          <span className="grain" />
+          <span className="vignette" />
+        </div>
         {children}
+        <Reveal />
       </body>
     </html>
   );

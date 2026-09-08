@@ -65,6 +65,15 @@ export default function ProjectRail() {
     setDragging(false);
   };
 
+  // Feeds the card's radial highlight. Written straight to the style object so
+  // the bloom follows the cursor without a re-render per pointer move.
+  const onCardMove = (e: React.PointerEvent<HTMLElement>) => {
+    const el = e.currentTarget;
+    const box = el.getBoundingClientRect();
+    el.style.setProperty("--mx", `${e.clientX - box.left}px`);
+    el.style.setProperty("--my", `${e.clientY - box.top}px`);
+  };
+
   const onKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowRight") {
       e.preventDefault();
@@ -114,8 +123,16 @@ export default function ProjectRail() {
           role="region"
           aria-label="Project cards, scroll sideways"
         >
-          {shown.map((p) => (
-            <article className="card" data-card key={p.slug}>
+          {shown.map((p, i) => (
+            <article
+              className="card glass edge-lit"
+              data-card
+              key={p.slug}
+              // Cards enter in sequence when a filter changes. Capped so a wide
+              // rail never holds the last card back by a visible amount.
+              style={{ animationDelay: `${Math.min(i, 6) * 55}ms` }}
+              onPointerMove={onCardMove}
+            >
               <div className="card-top">
                 <div>
                   <h3>{p.title}</h3>
@@ -151,6 +168,7 @@ export default function ProjectRail() {
                     rel="noreferrer noopener"
                   >
                     Visit {p.link.label}
+                    <ExternalLink />
                   </a>
                 ) : null}
               </div>
@@ -194,6 +212,20 @@ function Chevron({ dir }: { dir: "left" | "right" }) {
         d={dir === "left" ? "M15 5 8 12l7 7" : "M9 5l7 7-7 7"}
         stroke="currentColor"
         strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function ExternalLink() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M14 5h5v5M19 5l-8 8M18 14v4a1.8 1.8 0 0 1-1.8 1.8H6A1.8 1.8 0 0 1 4.2 18V7.8A1.8 1.8 0 0 1 6 6h4"
+        stroke="currentColor"
+        strokeWidth="1.7"
         strokeLinecap="round"
         strokeLinejoin="round"
       />

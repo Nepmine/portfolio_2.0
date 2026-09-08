@@ -1,31 +1,36 @@
+import Image from "next/image";
+
+import ParticleField from "@/components/ParticleField";
 import ProjectRail from "@/components/ProjectRail";
-import { eraBlurbs, eraLabels, projects } from "@/lib/projects";
+import SiteNav from "@/components/SiteNav";
+import { eraBlurbs, eraLabels, eras, projects } from "@/lib/projects";
 import { site } from "@/lib/site";
+import portrait from "@/public/my_image.jpg";
+
+const stats = [
+  { value: String(projects.length), label: "Projects built" },
+  { value: String(eras.length), label: "Chapters" },
+  { value: "2", label: "Teams today" },
+];
 
 export default function Home() {
-  const ticker = [...projects, ...projects];
+  const marquee = [...projects, ...projects];
 
   return (
     <>
-      <header className="nav">
-        <div className="shell nav-inner">
-          <a className="mark" href="#top">
-            Suraj Ghimire<span>.</span>
-          </a>
-          <nav className="nav-links" aria-label="Sections">
-            <a href="#work">Work</a>
-            <a href="#projects">Projects</a>
-            <a href="#stack">Stack</a>
-            <a className="nav-cta" href="#contact">
-              Get in touch
-            </a>
-          </nav>
-        </div>
-      </header>
+      <SiteNav />
 
       <main id="main">
+        {/* ---------------------------------------------------------------- */}
         <section className="shell hero" id="top">
+          <ParticleField className="hero-canvas" />
+
           <div>
+            <span className="hero-badge glass">
+              <span className="status" aria-hidden="true" />
+              Open to product work
+            </span>
+
             <h1>
               <span className="line">
                 <span>I build web</span>
@@ -34,7 +39,9 @@ export default function Home() {
                 <span>platforms that</span>
               </span>
               <span className="line">
-                <span>go into production.</span>
+                <span>
+                  go into <span className="grad-warm">production</span>.
+                </span>
               </span>
             </h1>
 
@@ -49,37 +56,75 @@ export default function Home() {
               <div className="hero-actions">
                 <a className="btn btn-solid" href="#projects">
                   See the work
+                  <ArrowRight />
                 </a>
                 <a className="btn" href={`mailto:${site.email}`}>
+                  <Mail />
                   Email me
                 </a>
               </div>
             </div>
-          </div>
 
-          <div className="ticker fade-in" aria-hidden="true">
-            <div className="ticker-track">
-              {ticker.map((p, i) => (
-                <div className="ticker-item" key={`${p.slug}-${i}`}>
-                  <b>{p.title}</b>
-                  <i>{eraLabels[p.era]}</i>
+            <div className="hero-stats fade-in delay">
+              {stats.map((s) => (
+                <div key={s.label}>
+                  <b>{s.value}</b>
+                  <span>{s.label}</span>
                 </div>
               ))}
             </div>
           </div>
+
+          <div className="portrait">
+            <span className="portrait-glow" aria-hidden="true" />
+            <div className="portrait-frame">
+              <Image
+                src={portrait}
+                alt={`${site.name}, full-stack developer based in ${site.location}`}
+                priority
+                sizes="(max-width: 980px) 80vw, 24rem"
+                placeholder="blur"
+              />
+            </div>
+            <span className="portrait-chip glass one">
+              <b>Bridgenext</b>
+              <span>Software Developer</span>
+            </span>
+            <span className="portrait-chip glass two">
+              <b>Mahavi</b>
+              <span>Core developer</span>
+            </span>
+          </div>
         </section>
 
+        <div className="shell">
+          <div className="marquee" aria-hidden="true">
+            <div className="marquee-track">
+              {marquee.map((p, i) => (
+                <span className="marquee-item" key={`${p.slug}-${i}`}>
+                  <b>{p.title}</b>
+                  <i>{eraLabels[p.era]}</i>
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* ---------------------------------------------------------------- */}
         <section className="shell section" id="now">
           <div className="section-head">
-            <h2>Where I am now</h2>
-            <p>
+            <div>
+              <span className="eyebrow reveal">Where I am</span>
+              <h2 className="reveal">Where I am now</h2>
+            </div>
+            <p className="reveal">
               Two places, on purpose. One teaches me how software is built at scale for
               clients; the other lets our team decide everything ourselves.
             </p>
           </div>
 
-          <div className="now">
-            <div className="now-cell">
+          <div className="now" data-stagger>
+            <article className="now-cell glass edge-lit reveal">
               <span className="role">Full-time</span>
               <h3>Bridgenext</h3>
               <p>
@@ -88,8 +133,8 @@ export default function Home() {
                 event-driven pub-sub architecture — inside Git workflows, code review and
                 Agile delivery.
               </p>
-            </div>
-            <div className="now-cell">
+            </article>
+            <article className="now-cell glass edge-lit reveal">
               <span className="role">With the team</span>
               <h3>Mahavi</h3>
               <p>
@@ -97,29 +142,33 @@ export default function Home() {
                 I sit on the core dev side: Next.js, Fastify and PostgreSQL, plus the
                 studio site at mahavi.tech.
               </p>
-            </div>
-            <div className="now-cell">
+            </article>
+            <article className="now-cell glass edge-lit reveal">
               <span className="role">Based in</span>
               <h3>Lumbini, Nepal</h3>
               <p>
                 B.Tech from Rajarambapu Institute of Technology, Maharashtra, finished in
                 2025 with a CGPA of 8.28. Comfortable working remote across time zones.
               </p>
-            </div>
+            </article>
           </div>
         </section>
 
+        {/* ---------------------------------------------------------------- */}
         <section className="shell section" id="work">
           <div className="section-head">
-            <h2>How I got here</h2>
-            <p>
+            <div>
+              <span className="eyebrow reveal">The path</span>
+              <h2 className="reveal">How I got here</h2>
+            </div>
+            <p className="reveal">
               Five years, in order: learning the fundamentals the hard way, then enterprise
               development, then shipping and owning products.
             </p>
           </div>
 
           <div className="timeline">
-            <div className="tl-row">
+            <div className="tl-row reveal">
               <div className="tl-when">2021 — 2025</div>
               <div className="tl-what">
                 <h3>B.Tech, Computer Engineering</h3>
@@ -135,7 +184,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="tl-row">
+            <div className="tl-row reveal">
               <div className="tl-when">Internship</div>
               <div className="tl-what">
                 <h3>Software Development Intern</h3>
@@ -148,7 +197,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="tl-row">
+            <div className="tl-row reveal">
               <div className="tl-when">Current</div>
               <div className="tl-what">
                 <h3>Software Developer</h3>
@@ -166,7 +215,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="tl-row">
+            <div className="tl-row reveal">
               <div className="tl-when">Alongside</div>
               <div className="tl-what">
                 <h3>Core developer</h3>
@@ -181,28 +230,38 @@ export default function Home() {
           </div>
         </section>
 
+        {/* ---------------------------------------------------------------- */}
         <section className="shell section" id="projects">
           <div className="section-head">
-            <h2>Every project, in one place</h2>
-            <p>
+            <div>
+              <span className="eyebrow reveal">Selected work</span>
+              <h2 className="reveal">Every project, in one place</h2>
+            </div>
+            <p className="reveal">
               {projects.length} builds across three chapters. {eraBlurbs.mahavi}{" "}
               {eraBlurbs.bridgenext} {eraBlurbs.college}
             </p>
           </div>
-          <ProjectRail />
+          <div className="reveal">
+            <ProjectRail />
+          </div>
         </section>
 
+        {/* ---------------------------------------------------------------- */}
         <section className="shell section" id="stack">
           <div className="section-head">
-            <h2>What I work with</h2>
-            <p>
+            <div>
+              <span className="eyebrow reveal">Toolkit</span>
+              <h2 className="reveal">What I work with</h2>
+            </div>
+            <p className="reveal">
               Mostly TypeScript on both ends. I care more about how a system is shaped than
               which framework draws it.
             </p>
           </div>
 
-          <div className="stack-grid">
-            <div className="stack-group">
+          <div className="stack-grid" data-stagger>
+            <div className="stack-group glass edge-lit reveal">
               <h3>Front end</h3>
               <ul>
                 <li>React</li>
@@ -212,7 +271,7 @@ export default function Home() {
                 <li>HTML and CSS</li>
               </ul>
             </div>
-            <div className="stack-group">
+            <div className="stack-group glass edge-lit reveal">
               <h3>Back end</h3>
               <ul>
                 <li>NestJS</li>
@@ -222,7 +281,7 @@ export default function Home() {
                 <li>GraphQL and REST</li>
               </ul>
             </div>
-            <div className="stack-group">
+            <div className="stack-group glass edge-lit reveal">
               <h3>Data</h3>
               <ul>
                 <li>PostgreSQL</li>
@@ -231,7 +290,7 @@ export default function Home() {
                 <li>TypeORM</li>
               </ul>
             </div>
-            <div className="stack-group">
+            <div className="stack-group glass edge-lit reveal">
               <h3>Systems and tooling</h3>
               <ul>
                 <li>Apache Kafka</li>
@@ -244,31 +303,39 @@ export default function Home() {
           </div>
         </section>
 
+        {/* ---------------------------------------------------------------- */}
         <section className="shell section" id="contact">
-          <div className="contact">
-            <div>
-              <h2>Have something worth building?</h2>
-              <p>
-                I am open to interesting product work, whether that is a full platform or
-                one hard part of one. The fastest way to reach me is email.
-              </p>
-            </div>
-            <div className="contact-list">
-              <a href={`mailto:${site.email}`}>
-                {site.email} <em>Email</em>
-              </a>
-              <a href={site.github} target="_blank" rel="noreferrer noopener">
-                GitHub <em>Code</em>
-              </a>
-              <a href={site.linkedin} target="_blank" rel="noreferrer noopener">
-                LinkedIn <em>Profile</em>
-              </a>
-              <a href="https://mahavi.tech" target="_blank" rel="noreferrer noopener">
-                mahavi.tech <em>Team</em>
-              </a>
-              <span>
-                {site.location} <em>Based in</em>
-              </span>
+          <div className="contact-panel glass reveal">
+            <div className="contact">
+              <div>
+                <span className="eyebrow">Contact</span>
+                <h2>Have something worth building?</h2>
+                <p>
+                  I am open to interesting product work, whether that is a full platform or
+                  one hard part of one. The fastest way to reach me is email.
+                </p>
+                <a className="btn btn-solid" href={`mailto:${site.email}`}>
+                  Start a conversation
+                  <ArrowRight />
+                </a>
+              </div>
+              <div className="contact-list">
+                <a href={`mailto:${site.email}`}>
+                  {site.email} <em>Email</em>
+                </a>
+                <a href={site.github} target="_blank" rel="noreferrer noopener">
+                  GitHub <em>Code</em>
+                </a>
+                <a href={site.linkedin} target="_blank" rel="noreferrer noopener">
+                  LinkedIn <em>Profile</em>
+                </a>
+                <a href="https://mahavi.tech" target="_blank" rel="noreferrer noopener">
+                  mahavi.tech <em>Team</em>
+                </a>
+                <span>
+                  {site.location} <em>Based in</em>
+                </span>
+              </div>
             </div>
           </div>
         </section>
@@ -277,7 +344,63 @@ export default function Home() {
       <footer className="shell footer">
         <span>© {new Date().getFullYear()} Suraj Ghimire</span>
         <span>Built with Next.js in Lumbini, Nepal</span>
+        <a className="to-top" href="#top">
+          <ArrowUp />
+          Back to top
+        </a>
       </footer>
     </>
+  );
+}
+
+/* ── Icons ── */
+
+function ArrowRight() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M5 12h13m0 0-5-5m5 5-5 5"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function ArrowUp() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M12 19V5m0 0-6 6m6-6 6 6"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function Mail() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect
+        x="3"
+        y="5"
+        width="18"
+        height="14"
+        rx="2.5"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
+      <path
+        d="m4 8 7.1 4.7a1.6 1.6 0 0 0 1.8 0L20 8"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+    </svg>
   );
 }
