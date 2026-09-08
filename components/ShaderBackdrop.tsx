@@ -52,7 +52,7 @@ float fbm(vec2 p) {
   float v = 0.0;
   float a = 0.5;
   mat2 rot = mat2(0.8, 0.6, -0.6, 0.8);     // decorrelates the octaves
-  for (int i = 0; i < 5; i++) {
+  for (int i = 0; i < 4; i++) {
     v += a * noise(p);
     p = rot * p * 2.02;
     a *= 0.5;
@@ -112,7 +112,10 @@ void main() {
   col *= 0.35 + 0.65 * vig;
   col += (hash(frag + fract(uTime)) - 0.5) * 0.012;
 
-  outColor = vec4(col, 1.0);
+  // Fade the layer itself out across the bottom third. This replaces what a
+  // CSS mask used to do, at no compositing cost.
+  float alpha = smoothstep(0.0, 0.30, uv.y);
+  outColor = vec4(col * alpha, alpha);
 }`;
 
 function compile(gl: WebGL2RenderingContext, type: number, src: string) {
@@ -135,7 +138,10 @@ export default function ShaderBackdrop({ className }: { className?: string }) {
     if (!canvas) return;
 
     const gl = canvas.getContext("webgl2", {
-      alpha: false,
+      // Transparent at the base, so the page's own ground shows through
+      // without a CSS mask. Premultiplied, so the shader writes col * a.
+      alpha: true,
+      premultipliedAlpha: true,
       antialias: false,
       depth: false,
       stencil: false,
@@ -175,7 +181,7 @@ export default function ShaderBackdrop({ className }: { className?: string }) {
       // The field is smooth by construction, so rendering at roughly half
       // resolution is free quality: it costs a quarter of the fragments and
       // is indistinguishable once scaled up.
-      const scale = Math.min(window.devicePixelRatio || 1, 2) * 0.55;
+      const scale = Math.min(window.devicePixelRatio || 1, 2) * 0.45;
       const w = Math.max(1, Math.round(canvas.offsetWidth * scale));
       const h = Math.max(1, Math.round(canvas.offsetHeight * scale));
       if (canvas.width === w && canvas.height === h) return;
@@ -186,20 +192,30 @@ export default function ShaderBackdrop({ className }: { className?: string }) {
     };
 
     const draw = (time: number) => {
+      gl.clearColor(0, 0, 0, 0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
       gl.uniform1f(uTime, time);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     };
 
+    // Cap at ~30fps. At this drift speed a 33ms step is invisible, and it
+    // halves the shader's share of every frame budget.
+    const MIN_FRAME_MS = 32;
+    let lastDraw = 0;
+
     const frame = (now: number) => {
+      raf = requestAnimationFrame(frame);
+      if (now - lastDraw < MIN_FRAME_MS) return;
+      lastDraw = now;
       elapsed = (now - start) / 1000;
       draw(elapsed);
-      raf = requestAnimationFrame(frame);
     };
 
     const play = () => {
       if (running || reduced.matches) return;
       running = true;
       start = performance.now() - elapsed * 1000;  // resume where it paused
+      lastDraw = 0;
       raf = requestAnimationFrame(frame);
     };
 

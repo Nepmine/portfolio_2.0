@@ -61,7 +61,7 @@ export default function Home() {
 
           <div className="shell hero">
             <div className="hero-copy">
-              <span className="hero-badge glass">
+              <span className="hero-badge glass glass-blur">
                 <span className="status" aria-hidden="true" />
                 Open to product work
               </span>

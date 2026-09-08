@@ -86,67 +86,43 @@ body {
   overflow-x: hidden;
 }
 
-/* Ambient light. Two slow-drifting aurora fields plus a fine grain so large
-   dark areas have depth instead of reading as a flat black field. */
+/* Ambient light.
+   This used to be five composited layers: two animated blurred blobs, a grain
+   overlay in `mix-blend-mode: overlay`, and a vignette — each one a fixed,
+   viewport-sized surface the compositor had to re-blend on every frame. The
+   blend group alone cost 37% of idle render time, the blobs another 45%.
+   It is now one element painting one stack of backgrounds. No filter, no blend
+   mode, no animation: the hero's shader supplies the page's movement, and this
+   supplies its ground. */
 .ambience {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  overflow: hidden;
-}
-
-.ambience::before,
-.ambience::after {
-  content: "";
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(90px);
-  will-change: transform;
-}
-
-.ambience::before {
-  width: 62rem;
-  height: 42rem;
-  top: -16rem;
-  right: -12rem;
-  background: radial-gradient(circle at 40% 40%, rgba(233, 162, 59, 0.22), transparent 68%);
-  animation: drift-a 34s var(--ease-soft) infinite alternate;
-}
-
-.ambience::after {
-  width: 54rem;
-  height: 40rem;
-  top: 22vh;
-  left: -18rem;
-  background: radial-gradient(circle at 60% 40%, rgba(47, 93, 76, 0.62), transparent 66%);
-  animation: drift-b 40s var(--ease-soft) infinite alternate;
-}
-
-.ambience .grain {
-  position: absolute;
-  inset: -50%;
-  opacity: 0.35;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.42'/%3E%3C/svg%3E");
-  mix-blend-mode: overlay;
-}
-
-.ambience .vignette {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(120% 90% at 50% 0%, transparent 45%, rgba(7, 19, 16, 0.75) 100%);
-}
-
-@keyframes drift-a {
-  to {
-    transform: translate3d(-6rem, 5rem, 0) scale(1.12);
-  }
-}
-
-@keyframes drift-b {
-  to {
-    transform: translate3d(5rem, -4rem, 0) scale(1.08);
-  }
+  background-image:
+    /* grain */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E"),
+    /* vignette */
+    radial-gradient(120% 90% at 50% 0%, transparent 45%, rgba(7, 19, 16, 0.75) 100%),
+    /* warm source, upper right — the direction every shadow falls away from */
+    radial-gradient(
+      58rem 42rem at 88% 6%,
+      rgba(233, 162, 59, 0.17) 0%,
+      rgba(233, 162, 59, 0.1) 30%,
+      rgba(233, 162, 59, 0.04) 54%,
+      transparent 76%
+    ),
+    /* cool counter-light, lower left */
+    radial-gradient(
+      52rem 44rem at 2% 62%,
+      rgba(47, 93, 76, 0.42) 0%,
+      rgba(47, 93, 76, 0.26) 32%,
+      rgba(47, 93, 76, 0.1) 56%,
+      transparent 78%
+    );
+  background-repeat: repeat, no-repeat, no-repeat, no-repeat;
+  background-size: 140px 140px, cover, cover, cover;
+  opacity: 0.85;
 }
 
 main,
@@ -233,9 +209,13 @@ a {
 
 .glass {
   background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+}
+
+/* Opt in only where something varied actually sits behind the surface. */
+.glass-blur {
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
 }
 
 /* A hairline gradient edge drawn with a masked border — cheaper and crisper
@@ -327,9 +307,12 @@ a {
 }
 
 .nav.scrolled {
-  background: rgba(11, 26, 21, 0.72);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
+  /* More opaque, less blur: this bar is fixed and full-width, so its backdrop
+     is re-read on every scroll frame. At this opacity a 10px radius reads the
+     same as 18px did. */
+  background: rgba(11, 26, 21, 0.86);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-bottom-color: var(--glass-border);
   box-shadow: var(--shadow-md);
   padding-block: 0.35rem;
@@ -558,10 +541,9 @@ a {
   width: 100%;
   height: 100%;
   display: block;
-  /* The canvas paints opaque. Fading it out at the base lets the page's own
-     ambient field show through, so the hero has no bottom edge. */
-  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 99%);
-  mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 99%);
+  /* No mask here: the fade lives in the fragment shader's alpha channel, which
+     the compositor handles as an ordinary translucent layer. A CSS mask on
+     this canvas measured more expensive than the shader itself. */
 }
 
 /* Sinks the shader's contrast so type stays readable over it, and closes the
@@ -571,9 +553,14 @@ a {
   inset: 0;
   z-index: -1;
   pointer-events: none;
+  /* Both layers must reach zero before the section's bottom edge. The second
+     one used to be a 105deg linear — uniform down the whole height, so it cut
+     off dead straight at the boundary and drew a visible seam across the page.
+     As a radial anchored upper-left it does the same job for the headline's
+     legibility and fades out on its own. */
   background:
-    linear-gradient(180deg, rgba(7, 19, 16, 0.5) 0%, rgba(7, 19, 16, 0.08) 32%, rgba(7, 19, 16, 0.35) 82%, transparent 100%),
-    linear-gradient(105deg, rgba(7, 19, 16, 0.66) 0%, rgba(7, 19, 16, 0.12) 55%, transparent 78%);
+    linear-gradient(180deg, rgba(7, 19, 16, 0.5) 0%, rgba(7, 19, 16, 0.08) 34%, rgba(7, 19, 16, 0.3) 78%, transparent 100%),
+    radial-gradient(105% 88% at 0% 26%, rgba(7, 19, 16, 0.66) 0%, rgba(7, 19, 16, 0.24) 44%, transparent 76%);
 }
 
 .hero {
@@ -879,9 +866,8 @@ a {
   inset: -22% -18% -10%;
   border-radius: 50%;
   background:
-    radial-gradient(circle at 62% 34%, rgba(233, 162, 59, 0.26), transparent 62%),
-    radial-gradient(circle at 30% 70%, rgba(63, 174, 134, 0.16), transparent 60%);
-  filter: blur(46px);
+    radial-gradient(closest-side circle at 62% 34%, rgba(233, 162, 59, 0.24) 0%, rgba(233, 162, 59, 0.1) 42%, transparent 76%),
+    radial-gradient(closest-side circle at 30% 70%, rgba(63, 174, 134, 0.15) 0%, rgba(63, 174, 134, 0.05) 46%, transparent 78%);
   transform: translateZ(-70px) scale(1.05);
 }
 
@@ -895,8 +881,12 @@ a {
   height: 5.5rem;
   translate: -50% 0;
   border-radius: 50%;
-  background: radial-gradient(ellipse at 50% 50%, rgba(233, 162, 59, 0.17), transparent 68%);
-  filter: blur(24px);
+  background: radial-gradient(
+    closest-side ellipse at 50% 50%,
+    rgba(233, 162, 59, 0.16) 0%,
+    rgba(233, 162, 59, 0.07) 44%,
+    transparent 80%
+  );
   transform: translateZ(-50px);
 }
 

@@ -129,10 +129,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a className="skip" href="#main">
           Skip to content
         </a>
-        <div className="ambience" aria-hidden="true">
-          <span className="grain" />
-          <span className="vignette" />
-        </div>
+        <div className="ambience" aria-hidden="true" />
         {children}
         <Reveal />
       </body>

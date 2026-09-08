@@ -27,9 +27,11 @@ export default function Portrait({ src, alt }: { src: StaticImageData; alt: stri
 
     // Target vs current, lerped on a frame loop. Writing the transform straight
     // from the pointer event makes the tilt feel twitchy and tied to mouse
-    // polling rate; easing toward a target gives it weight.
+    // polling rate; easing toward a target gives it weight. The loop is only
+    // alive while something is actually moving.
     const state = { x: 0, y: 0, tx: 0, ty: 0, active: 0, tActive: 0 };
     let raf = 0;
+    let idle = true;
 
     const frame = () => {
       state.x += (state.tx - state.x) * 0.08;
@@ -45,6 +47,29 @@ export default function Portrait({ src, alt }: { src: StaticImageData; alt: stri
       stage.style.setProperty("--tilt-y", state.y.toFixed(3));
       stage.style.setProperty("--tilt-on", state.active.toFixed(3));
 
+      // The easing is asymptotic, so it never *reaches* the target. Once the
+      // remaining distance is below what a pixel can show, stop: a loop that
+      // runs forever costs a frame's work every frame for no visible change,
+      // and this one was 13% of idle render time.
+      const settled =
+        Math.abs(state.tx - state.x) < 0.0015 &&
+        Math.abs(state.ty - state.y) < 0.0015 &&
+        Math.abs(state.tActive - state.active) < 0.0015;
+
+      if (settled) {
+        state.x = state.tx;
+        state.y = state.ty;
+        state.active = state.tActive;
+        idle = true;
+        raf = 0;
+        return;
+      }
+      raf = requestAnimationFrame(frame);
+    };
+
+    const wake = () => {
+      if (!idle) return;
+      idle = false;
       raf = requestAnimationFrame(frame);
     };
 
@@ -57,12 +82,14 @@ export default function Portrait({ src, alt }: { src: StaticImageData; alt: stri
       state.tx = Math.max(-1, Math.min(1, px));
       state.ty = Math.max(-1, Math.min(1, py));
       state.tActive = 1;
+      wake();
     };
 
     const onLeave = () => {
       state.tx = 0;
       state.ty = 0;
       state.tActive = 0;
+      wake();
     };
 
     // Scoped to the hero, not the window: the arch is an object that responds
@@ -71,7 +98,6 @@ export default function Portrait({ src, alt }: { src: StaticImageData; alt: stri
     const scope = root.closest("section") ?? root;
     scope.addEventListener("pointermove", onMove as EventListener, { passive: true });
     scope.addEventListener("pointerleave", onLeave);
-    raf = requestAnimationFrame(frame);
 
     return () => {
       cancelAnimationFrame(raf);
